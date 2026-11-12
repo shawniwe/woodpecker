@@ -1,5 +1,5 @@
 <template>
-  <main class="flex h-full w-full flex-col items-center justify-center">
+  <main class="flex min-h-full w-full flex-col items-center justify-center gap-4 px-4 py-8">
     <Error v-if="errorMessage" class="w-full md:w-3xl">
       <span class="whitespace-pre">{{ errorMessage }}</span>
       <span v-if="errorDescription" class="mt-1 whitespace-pre">{{ errorDescription }}</span>
@@ -13,37 +13,33 @@
       </a>
     </Error>
 
-    <div
-      class="min-h-sm border-wp-background-400 dark:border-wp-background-100 bg-wp-background-100 dark:bg-wp-background-200 flex w-full flex-col overflow-hidden border md:m-8 md:w-3xl md:flex-row md:rounded-md"
-    >
-      <div class="bg-wp-primary-200 dark:bg-wp-primary-300 flex min-h-48 items-center justify-center md:w-3/5">
-        <WoodpeckerLogo preserveAspectRatio="xMinYMin slice" class="h-32 w-32 md:h-48 md:w-48" />
-      </div>
-      <div class="flex min-h-48 flex-col items-center justify-center gap-4 p-4 text-center md:w-2/5">
-        <h1 class="text-wp-text-100 text-xl">{{ $t('login_to_woodpecker_with') }}</h1>
-        <div class="flex flex-col gap-2">
-          <Button
-            v-for="forge in forgesWithNameAndFavicon"
-            :key="forge.id"
-            :start-icon="forge.type === 'addon' ? 'repo' : forge.type"
-            class="whitespace-normal!"
-            @click="authenticate(forge.id)"
-          >
-            <div class="mr-2 w-4">
-              <img
-                v-if="forge.favicon && !failedForgeFavicons.has(forge.id)"
-                :src="forge.favicon"
-                :alt="$t('login_to_woodpecker_with', { forge: forge.name })"
-                @error="() => failedForgeFavicons.add(forge.id)"
-              />
-              <Icon v-else :name="forge.type === 'addon' ? 'repo' : forge.type" />
-            </div>
+    <Card class="w-full max-w-sm items-center gap-5 p-8 text-center">
+      <span class="bg-wp-control-ok-200 grid size-12 place-items-center rounded-xl">
+        <WoodpeckerLogo class="size-9" />
+      </span>
+      <h1 class="text-xl font-semibold tracking-tight">{{ $t('login_to_woodpecker_with') }}</h1>
+      <div class="flex w-full flex-col gap-2">
+        <Button
+          v-for="forge in forgesWithNameAndFavicon"
+          :key="forge.id"
+          :start-icon="forge.type === 'addon' ? 'repo' : forge.type"
+          class="whitespace-normal!"
+          @click="authenticate(forge.id)"
+        >
+          <div class="mr-2 w-4">
+            <img
+              v-if="forge.favicon && !failedForgeFavicons.has(forge.id)"
+              :src="forge.favicon"
+              :alt="$t('login_to_woodpecker_with', { forge: forge.name })"
+              @error="() => failedForgeFavicons.add(forge.id)"
+            />
+            <Icon v-else :name="forge.type === 'addon' ? 'repo' : forge.type" />
+          </div>
 
-            {{ forge.name }}
-          </Button>
-        </div>
+          {{ forge.name }}
+        </Button>
       </div>
-    </div>
+    </Card>
   </main>
 </template>
 
@@ -56,6 +52,7 @@ import WoodpeckerLogo from '~/assets/logo.svg?component';
 import Button from '~/components/atomic/Button.vue';
 import Error from '~/components/atomic/Error.vue';
 import Icon from '~/components/atomic/Icon.vue';
+import Card from '~/components/ui/card/Card.vue';
 import useApiClient from '~/compositions/useApiClient';
 import useAuthentication from '~/compositions/useAuthentication';
 import { useWPTitle } from '~/compositions/useWPTitle';

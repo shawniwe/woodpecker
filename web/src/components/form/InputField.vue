@@ -1,7 +1,7 @@
 <template>
   <div class="mt-2 mb-4 flex flex-col">
     <div class="mb-2 flex items-center">
-      <label class="text-wp-text-100 font-bold" :for="id" v-bind="$attrs">{{ label }}</label>
+      <label class="text-card-foreground text-sm font-medium" :for="id" v-bind="$attrs">{{ label }}</label>
       <DocsLink v-if="docsUrl" :topic="label" :url="docsUrl" class="ml-2" />
       <slot v-else-if="$slots.titleActions" name="titleActions" />
     </div>

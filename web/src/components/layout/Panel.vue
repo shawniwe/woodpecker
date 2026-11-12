@@ -1,10 +1,11 @@
 <template>
-  <div class="border-wp-background-400 dark:border-wp-background-100 w-full overflow-hidden rounded-md border">
+  <Card class="w-full gap-0 overflow-hidden p-0 shadow-xs">
     <component
       :is="collapsable ? 'button' : 'div'"
       v-if="title"
       type="button"
-      class="bg-wp-control-neutral-100 text-wp-text-100 flex w-full gap-2 px-4 py-2 font-bold"
+      class="border-border bg-wp-background-200 text-card-foreground flex w-full items-center gap-2 border-b px-4 py-2.5 text-sm font-semibold"
+      :aria-expanded="collapsable ? !collapsed : undefined"
       :class="{
         'cursor-pointer': collapsable,
       }"
@@ -29,13 +30,14 @@
         <slot />
       </div>
     </div>
-  </div>
+  </Card>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 
 import Icon from '~/components/atomic/Icon.vue';
+import Card from '~/components/ui/card/Card.vue';
 
 const props = defineProps<{
   title?: string;

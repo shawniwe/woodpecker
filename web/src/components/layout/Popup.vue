@@ -2,12 +2,12 @@
   <!-- overlay -->
   <div
     v-if="open"
-    class="fixed top-0 right-0 bottom-0 left-0 z-40 bg-gray-900 opacity-80 print:hidden"
+    class="fixed top-0 right-0 bottom-0 left-0 z-40 bg-black/55 backdrop-blur-[2px] print:hidden"
     @click="$emit('close')"
   />
   <!-- overlay end -->
   <div v-if="open" class="fixed inset-0 z-50 m-auto flex max-w-2xl print:hidden">
-    <div class="shadow-all m-auto flex h-auto flex-col p-2">
+    <div class="m-auto flex h-auto max-h-[90dvh] min-w-0 flex-col overflow-auto p-3">
       <slot />
     </div>
   </div>

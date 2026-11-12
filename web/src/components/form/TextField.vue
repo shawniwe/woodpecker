@@ -2,7 +2,7 @@
   <input
     v-if="lines === 1"
     v-model="innerValue"
-    class="border-wp-control-neutral-300 dark:bg-wp-control-neutral-100 dark:text-wp-text-100 dark:placeholder:text-wp-text-alt-100 focus-visible:border-wp-control-neutral-400 w-full rounded-md border px-2 py-1 focus-visible:outline-hidden"
+    class="border-border bg-card text-card-foreground placeholder:text-wp-text-alt-100 focus-visible:ring-wp-link-100/35 focus-visible:border-wp-link-100 w-full rounded-md border px-3 py-1.5 text-sm shadow-xs transition-colors outline-none focus-visible:ring-2"
     :class="{ 'opacity-50': disabled }"
     :disabled="disabled"
     :type="type"
@@ -11,7 +11,7 @@
   <textarea
     v-else
     v-model="innerValue"
-    class="border-wp-control-neutral-300 dark:bg-wp-control-neutral-100 dark:text-wp-text-100 dark:placeholder:text-wp-text-alt-100 focus-visible:border-wp-control-neutral-400 w-full rounded-md border px-2 py-1 focus-visible:outline-hidden"
+    class="border-border bg-card text-card-foreground placeholder:text-wp-text-alt-100 focus-visible:ring-wp-link-100/35 focus-visible:border-wp-link-100 w-full rounded-md border px-3 py-1.5 text-sm shadow-xs transition-colors outline-none focus-visible:ring-2"
     :class="{ 'opacity-50': disabled }"
     :disabled="disabled"
     :placeholder="placeholder"
