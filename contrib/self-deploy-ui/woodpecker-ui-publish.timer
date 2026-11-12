@@ -1,0 +1,10 @@
+[Unit]
+Description=Check for a Woodpecker UI build ready to publish
+
+[Timer]
+OnBootSec=5s
+OnUnitInactiveSec=5s
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target

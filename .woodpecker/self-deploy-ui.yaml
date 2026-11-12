@@ -32,4 +32,14 @@ steps:
       - tar -C dist -czf /tmp/woodpecker-ui.tar.gz index.html "assets/fork-ui/$CI_COMMIT_SHA"
       - touch /tmp/woodpecker-ui.ready
       - echo 'Build ready for the VPS deployment script'
-      - timeout 600 sh -c 'until test -f /tmp/woodpecker-ui.received; do sleep 2; done'
+      - |
+        timeout 180 sh -c '
+          until test -f /tmp/woodpecker-ui.received; do
+            if test -f /tmp/woodpecker-ui.failed; then
+              echo "Deployment failed. Check woodpecker-ui-publish.service on the VPS." >&2
+              exit 1
+            fi
+            sleep 2
+          done
+        ' || exit $?
+        echo 'Published and verified over HTTPS'

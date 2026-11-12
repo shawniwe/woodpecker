@@ -1,0 +1,10 @@
+[Unit]
+Description=Publish the verified Woodpecker UI build
+After=docker.service
+ConditionPathExists=/opt/woodpecker-ci/publish-ui.py
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/woodpecker-ci/publish-ui.py
+UMask=0022
+TimeoutStartSec=160
