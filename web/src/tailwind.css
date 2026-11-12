@@ -1061,3 +1061,9 @@
 @utility display-unset {
   display: unset;
 }
+
+@theme inline {
+  --color-card: var(--wp-background-100);
+  --color-card-foreground: var(--wp-text-200);
+  --color-border: var(--wp-background-300);
+}

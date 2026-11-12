@@ -1,0 +1,35 @@
+when:
+  - event: manual
+    branch: experiment/shadcn-self-deploy
+
+variables:
+  - &node_image docker.io/node:24-bookworm
+
+steps:
+  install:
+    image: *node_image
+    directory: web
+    commands:
+      - npm exec --yes --package=pnpm@12.18.0 -- pnpm install --frozen-lockfile
+
+  verify:
+    image: *node_image
+    directory: web
+    commands:
+      - ./node_modules/.bin/vue-tsc --noEmit
+      - ./node_modules/.bin/vitest run --maxWorkers=2
+
+  build:
+    image: *node_image
+    directory: web
+    commands:
+      - ./node_modules/.bin/vite build --base=/ --assetsDir="assets/fork-ui/$CI_COMMIT_SHA"
+
+  handoff-ui:
+    image: *node_image
+    directory: web
+    commands:
+      - tar -C dist -czf /tmp/woodpecker-ui.tar.gz index.html "assets/fork-ui/$CI_COMMIT_SHA"
+      - touch /tmp/woodpecker-ui.ready
+      - echo 'Build ready for the VPS deployment script'
+      - timeout 600 sh -c 'until test -f /tmp/woodpecker-ui.received; do sleep 2; done'
