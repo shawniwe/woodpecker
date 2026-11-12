@@ -9,18 +9,18 @@
     <div
       class="code-box-log flex grow flex-col overflow-hidden p-0! md:mt-0"
       :class="{
-        'md:rounded-md!': !fullscreen,
+        'md:border-border md:rounded-xl! md:border': !fullscreen,
       }"
       @mouseover="showActions = true"
       @mouseleave="showActions = false"
     >
       <div
-        class="bg-wp-code-100 fixed top-0 left-0 flex w-full flex-row items-center px-4 py-2 md:relative md:top-auto md:left-auto"
+        class="bg-wp-code-100 fixed top-0 left-0 flex min-h-11 w-full flex-row items-center gap-3 border-b border-white/10 px-4 py-2 md:relative md:top-auto md:left-auto"
       >
-        <span class="text-wp-code-text-100 text-base font-bold">
-          <span class="md:display-unset hidden">{{ $t('repo.pipeline.log_title') }}</span>
-          <span class="md:hidden">{{ step?.name }}</span>
-        </span>
+        <div class="text-wp-code-text-100 flex min-w-0 items-baseline gap-2 text-sm">
+          <span class="text-wp-code-text-alt-100 hidden shrink-0 md:inline">{{ $t('repo.pipeline.log_title') }}</span>
+          <span class="truncate font-mono font-semibold" :title="step?.name">{{ step?.name }}</span>
+        </div>
 
         <div class="ml-auto flex flex-row items-center gap-x-2">
           <IconButton

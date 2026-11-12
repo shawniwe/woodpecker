@@ -21,7 +21,7 @@ function mountStepList(pipeline: Pipeline) {
     global: {
       plugins: [i18n],
       // router-link resolves globally, so shallowMount does not stub it.
-      stubs: { 'router-link': true, RouterLink: true },
+      stubs: { 'router-link': true, RouterLink: true, Card: false },
     },
   });
 }

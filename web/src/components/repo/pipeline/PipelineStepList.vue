@@ -1,8 +1,6 @@
 <template>
   <div class="text-wp-text-100 flex w-full flex-col gap-2 pb-2 md:w-3/12 md:max-w-md md:min-w-xs">
-    <div
-      class="border-wp-background-400 dark:border-wp-background-100 bg-wp-background-200 flex shrink-0 flex-wrap justify-between gap-1 rounded-md border p-4"
-    >
+    <Card class="shrink-0 flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2 p-3 text-sm">
       <div class="flex shrink-0 items-center space-x-1">
         <div class="flex items-center">
           <Icon v-if="pipeline.event === 'cron'" name="stopwatch" />
@@ -54,7 +52,7 @@
           <span>{{ pipeline.commit.slice(0, 10) }}</span>
         </a>
       </div>
-    </div>
+    </Card>
 
     <Panel v-if="pipeline.workflows === undefined || pipeline.workflows.length === 0">
       <span>{{ $t('repo.pipeline.no_pipeline_steps') }}</span>
@@ -62,11 +60,7 @@
 
     <div class="relative min-h-0 w-full grow">
       <div class="absolute top-0 right-0 left-0 flex h-full flex-col gap-y-2 md:overflow-y-auto">
-        <div
-          v-for="workflow in pipeline.workflows"
-          :key="workflow.id"
-          class="border-wp-background-400 dark:border-wp-background-100 bg-wp-background-200 rounded-md border p-2"
-        >
+        <Card v-for="workflow in pipeline.workflows" :key="workflow.id" class="gap-0 p-1.5 shadow-none">
           <div class="flex flex-col gap-2">
             <div v-if="workflow.environ" class="flex flex-wrap justify-end gap-x-1 gap-y-2 pt-1 pr-1 text-xs">
               <div v-for="(value, key) in workflow.environ" :key="key">
@@ -77,6 +71,7 @@
               v-if="!singleWorkflow"
               type="button"
               :title="workflow.name"
+              :aria-expanded="!workflowsCollapsed[workflow.id]"
               class="hover:bg-wp-control-neutral-200 flex cursor-pointer items-center gap-2 rounded-md px-1 py-2"
               @click="workflowsCollapsed[workflow.id] = !workflowsCollapsed[workflow.id]"
             >
@@ -105,19 +100,20 @@
               :data-step-id="step.pid"
               type="button"
               :title="step.name"
-              class="hover:bg-wp-control-neutral-200 flex w-full cursor-pointer items-center gap-2 rounded-md border-2 border-transparent p-2"
+              :aria-pressed="selectedStepId === step.pid"
+              class="hover:bg-wp-background-200 focus-visible:outline-wp-link-100 flex w-full cursor-pointer items-center gap-2 rounded-md border border-transparent px-2.5 py-2 text-left text-sm focus-visible:outline-2 focus-visible:-outline-offset-2"
               :class="{
-                'bg-wp-control-neutral-200': selectedStepId && selectedStepId === step.pid,
+                'bg-wp-background-200 border-wp-background-400 font-semibold': selectedStepId === step.pid,
                 'mt-1': !singleWorkflow || step.pid !== workflow.children?.[0]?.pid,
               }"
               @click="$emit('update:selectedStepId', step.pid)"
             >
               <PipelineStatusIcon :service="step.type === StepType.Service" :status="step.state" class="h-4! w-4!" />
               <span class="truncate">{{ step.name }}</span>
-              <PipelineStepDuration :step="step" />
+              <PipelineStepDuration :step="step" class="ml-auto shrink-0 tabular-nums" />
             </button>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   </div>
@@ -131,6 +127,7 @@ import Icon from '~/components/atomic/Icon.vue';
 import Panel from '~/components/layout/Panel.vue';
 import PipelineStatusIcon from '~/components/repo/pipeline/PipelineStatusIcon.vue';
 import PipelineStepDuration from '~/components/repo/pipeline/PipelineStepDuration.vue';
+import Card from '~/components/ui/card/Card.vue';
 import usePipeline from '~/compositions/usePipeline';
 import { StepType } from '~/lib/api/types';
 import type { Pipeline, PipelineStep } from '~/lib/api/types';
