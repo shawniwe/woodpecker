@@ -1,34 +1,48 @@
 <template>
   <div class="app bg-wp-background-200 text-card-foreground m-auto flex h-full w-full flex-col">
     <router-view v-if="layout === 'blank'" />
-    <template v-else>
-      <Navbar />
-      <main class="relative flex h-full min-h-0">
-        <div id="scroll-component" class="flex grow flex-col overflow-y-auto">
-          <router-view />
-        </div>
-        <transition name="slide-right">
-          <PipelineFeedSidebar
-            class="dark:shadow-wp-background-500 absolute top-0 right-0 bottom-0 w-full max-w-80 border-l shadow-lg xl:max-w-96"
-          />
-        </transition>
-      </main>
-    </template>
+    <div v-else class="flex min-h-0 flex-1">
+      <Sidebar v-if="user" :user="user" :compact="compact" :section="section" />
+      <div
+        class="bg-card flex min-w-0 flex-1 flex-col"
+        :class="{ 'border-border md:my-2 md:mr-2 md:overflow-hidden md:rounded-xl md:border md:shadow-xs': user }"
+      >
+        <Navbar :user="user" :compact="compact" :section="section" @toggle-sidebar="compact = !compact" />
+        <main class="relative flex min-h-0 flex-1">
+          <div id="scroll-component" class="flex min-w-0 grow flex-col overflow-y-auto">
+            <router-view />
+          </div>
+          <transition name="slide-right">
+            <PipelineFeedSidebar
+              class="border-border bg-card absolute inset-y-0 right-0 w-full max-w-80 border-l shadow-lg xl:max-w-96"
+            />
+          </transition>
+        </main>
+      </div>
+    </div>
     <notifications position="bottom right" />
   </div>
 </template>
 
 <script lang="ts" setup>
+import { useStorage } from '@vueuse/core';
 import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
 import Navbar from '~/components/layout/header/Navbar.vue';
+import Sidebar from '~/components/layout/header/Sidebar.vue';
 import PipelineFeedSidebar from '~/components/pipeline-feed/PipelineFeedSidebar.vue';
 import useApiClient from '~/compositions/useApiClient';
+import useAuthentication from '~/compositions/useAuthentication';
+import useConfig from '~/compositions/useConfig';
 import useNotifications from '~/compositions/useNotifications';
 
 const route = useRoute();
+const { user } = useAuthentication();
+const { rootPath } = useConfig();
+const compact = useStorage('woodpecker-sidebar-compact', false);
+const section = computed(() => route.path.slice(rootPath?.length ?? 0).split('/')[1] ?? '');
 const apiClient = useApiClient();
 const { notify } = useNotifications();
 const i18n = useI18n();

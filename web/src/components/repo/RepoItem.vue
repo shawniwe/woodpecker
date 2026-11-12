@@ -4,48 +4,50 @@
     :to="{ name: 'repo', params: { repoId: repo.id } }"
     class="focus-visible:outline-wp-link-100 block min-w-0 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2"
   >
-    <Card class="group hover:border-wp-background-500 hover:bg-wp-background-200 gap-0 p-4 transition-colors">
-      <div class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2">
-        <div class="truncate text-sm font-semibold">
-          <span class="text-wp-text-alt-100 font-normal">{{ repo.owner }} / </span>{{ repo.name }}
+    <Card class="group hover:border-wp-background-500 h-full gap-0 overflow-hidden p-0 shadow-xs transition-colors">
+      <div class="flex min-w-0 items-center gap-3 p-4">
+        <span class="border-border bg-wp-background-200 grid size-9 shrink-0 place-items-center rounded-lg border">
+          <Icon name="repo" class="text-wp-text-100" />
+        </span>
+        <div class="min-w-0 flex-1">
+          <div class="truncate text-sm font-semibold" :title="repo.name">{{ repo.name }}</div>
+          <div class="text-wp-text-alt-100 truncate text-xs" :title="repo.owner">{{ repo.owner }}</div>
         </div>
-        <div class="text-wp-text-100 ml-auto">
-          <div
-            v-if="repo.visibility === RepoVisibility.Private"
-            :title="`${$t('repo.visibility.visibility')}: ${$t(`repo.visibility.private.private`)}`"
-          >
-            <Icon name="visibility-private" />
-          </div>
-          <div
-            v-else-if="repo.visibility === RepoVisibility.Internal"
-            :title="`${$t('repo.visibility.visibility')}: ${$t(`repo.visibility.internal.internal`)}`"
-          >
-            <Icon name="visibility-internal" />
-          </div>
-        </div>
+        <Icon
+          v-if="repo.visibility === RepoVisibility.Private"
+          name="visibility-private"
+          class="text-wp-text-alt-100 shrink-0"
+          :title="$t('repo.visibility.private.private')"
+        />
+        <Icon
+          v-else-if="repo.visibility === RepoVisibility.Internal"
+          name="visibility-internal"
+          class="text-wp-text-alt-100 shrink-0"
+          :title="$t('repo.visibility.internal.internal')"
+        />
+        <Icon name="chevron-right" class="text-wp-text-alt-100 size-4! shrink-0" />
+      </div>
 
-        <div class="text-wp-text-alt-100 col-span-2 flex min-w-0 gap-x-4 text-sm">
-          <template v-if="lastPipeline">
-            <div class="flex min-w-0 flex-1 items-center gap-x-1">
-              <PipelineStatusIcon v-if="lastPipeline" :status="lastPipeline.status" />
-              <RenderMarkdown
-                class="overflow-hidden pl-1 text-ellipsis whitespace-nowrap"
-                :title="message"
-                :content="shortMessage"
-                inline
-              />
-            </div>
-
-            <div class="ml-auto flex shrink-0 items-center gap-x-1">
-              <Icon name="since" />
-              <span>{{ since }}</span>
-            </div>
-          </template>
-
-          <div v-else class="flex gap-x-2">
-            <span>{{ $t('repo.pipeline.no_pipelines') }}</span>
+      <div
+        class="border-border bg-wp-background-200/65 text-wp-text-alt-100 flex min-h-15 flex-1 flex-col justify-center gap-2 border-t px-4 py-3 text-xs"
+      >
+        <template v-if="lastPipeline">
+          <div class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+            <span
+              class="border-border bg-card text-card-foreground inline-flex max-w-full items-center gap-1.5 rounded-md border px-1.5 py-0.5 font-medium"
+            >
+              <PipelineStatusIcon :status="lastPipeline.status" show-label class="gap-1.5 [&_svg]:size-3.5!" />
+            </span>
+            <span class="ml-auto whitespace-nowrap">{{ since }}</span>
           </div>
-        </div>
+          <RenderMarkdown
+            class="overflow-hidden text-ellipsis whitespace-nowrap"
+            :title="message"
+            :content="shortMessage"
+            inline
+          />
+        </template>
+        <span v-else>{{ $t('repo.pipeline.no_pipelines') }}</span>
       </div>
     </Card>
   </router-link>

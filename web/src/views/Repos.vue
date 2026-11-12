@@ -8,9 +8,8 @@
       <Button
         :to="{ name: 'repo-add' }"
         start-icon="plus"
-        :title="$t('repo.add')"
-        :aria-label="$t('repo.add')"
-        class="h-9"
+        :text="$t('repo.add')"
+        class="bg-card-foreground! text-card! h-9 hover:opacity-85"
       />
       <Button
         start-icon="refresh"
@@ -23,29 +22,27 @@
     </template>
 
     <Transition name="fade" mode="out-in">
-      <div v-if="search === '' && repos.length > 0" class="grid gap-8">
+      <div v-if="search === '' && repos.length > 0" class="grid gap-7">
         <div v-if="reposLastAccess.length > 0 && repos.length > 4" class="flex flex-col gap-4">
           <div>
-            <h2 class="text-wp-text-100 text-lg">{{ $t('repositories.last.title') }}</h2>
-            <span class="text-wp-text-alt-100">{{ $t('repositories.last.desc') }}</span>
+            <h2 class="text-sm font-semibold">{{ $t('repositories.last.title') }}</h2>
           </div>
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
+          <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             <RepoItem v-for="repo in reposLastAccess" :key="repo.id" :repo="repo" />
           </div>
         </div>
 
         <div class="flex flex-col gap-4">
-          <div>
-            <h2 class="text-wp-text-100 text-lg">{{ $t('repositories.all.title') }}</h2>
-            <span class="text-wp-text-alt-100">{{ $t('repositories.all.desc') }}</span>
-          </div>
-          <div class="flex flex-col gap-4">
+          <h2 v-if="reposLastAccess.length > 0 && repos.length > 4" class="text-sm font-semibold">
+            {{ $t('repositories.all.title') }}
+          </h2>
+          <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             <RepoItem v-for="repo in reposLastActivity" :key="repo.id" :repo="repo" />
           </div>
         </div>
       </div>
       <div v-else class="flex flex-col">
-        <div v-if="reposLastActivity.length > 0" class="flex flex-col gap-4">
+        <div v-if="reposLastActivity.length > 0" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <RepoItem v-for="repo in reposLastActivity" :key="repo.id" :repo="repo" />
         </div>
         <span v-else class="text-wp-text-100 text-center text-lg">{{ $t('no_search_results') }}</span>

@@ -164,6 +164,8 @@
     "back": "Назад",
     "cancel": "Отменить",
     "default": "по умолчанию",
+    "navigation": "Навигация",
+    "toggle_sidebar": "Переключить боковую панель",
     "docs": "Документация",
     "documentation_for": "Документация о «{topic}»",
     "errors": {

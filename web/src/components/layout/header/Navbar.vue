@@ -1,128 +1,97 @@
 <template>
-  <nav
-    class="border-border bg-card text-card-foreground z-20 flex min-h-15 shrink-0 items-center gap-3 border-b px-3 sm:gap-5 sm:px-6"
+  <header
+    class="border-border bg-card text-card-foreground flex min-h-12 shrink-0 items-center gap-2 border-b px-3 sm:px-4"
   >
-    <div class="flex min-w-0 items-center gap-1 sm:gap-2">
-      <router-link
-        :to="{ name: 'home' }"
-        aria-label="Woodpecker"
-        class="navbar-brand mr-1 flex shrink-0 items-center gap-2 rounded-md pr-1 sm:mr-3"
+    <template v-if="user">
+      <IconButton
+        class="hidden! md:flex!"
+        :title="$t('toggle_sidebar')"
+        aria-controls="workspace-navigation"
+        :aria-expanded="!compact"
+        @click="$emit('toggleSidebar')"
       >
-        <span class="bg-wp-control-ok-200 grid size-8 shrink-0 place-items-center rounded-lg">
-          <WoodpeckerLogo class="size-6" />
-        </span>
-        <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
-        <span class="hidden text-sm font-semibold tracking-tight sm:inline">Woodpecker</span>
-        <span
-          v-if="version?.currentShort"
-          class="border-border text-wp-text-alt-100 hidden rounded border px-1.5 py-0.5 font-mono text-[11px] lg:inline"
-          :title="version.current"
-        >
-          {{ version.currentShort }}
-        </span>
-      </router-link>
+        <SvgIcon :path="mdiDockLeft" size="1.15rem" />
+      </IconButton>
       <router-link
-        v-if="user"
         :to="{ name: 'repos' }"
-        class="navbar-link"
-        :class="{ 'navbar-selected': inRepositories }"
+        class="focus-visible:outline-wp-link-100 flex size-8 shrink-0 items-center justify-center rounded-md focus-visible:outline-2 md:hidden"
+        :aria-label="$t('repositories.title')"
       >
-        <span class="flex md:hidden">{{ $t('repos') }}</span>
-        <span class="hidden md:flex">{{ $t('repositories.title') }}</span>
+        <WoodpeckerLogo class="size-6" />
       </router-link>
-      <a
-        href="https://woodpecker-ci.org/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="navbar-link hidden! md:flex!"
-      >
-        {{ $t('docs') }}
-      </a>
-      <a
-        v-if="enableSwagger"
-        :href="apiUrl"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="navbar-link hidden! md:flex!"
-      >
-        {{ $t('api') }}
-      </a>
-    </div>
+      <span class="border-border ml-1 hidden h-4 border-l md:block" />
+      <span class="min-w-0 truncate text-sm font-medium">{{ sectionTitle }}</span>
+    </template>
+    <router-link v-else :to="{ name: 'home' }" class="flex items-center gap-2 font-semibold" aria-label="Woodpecker">
+      <WoodpeckerLogo class="size-6" />
+      <!-- eslint-disable-next-line @intlify/vue-i18n/no-raw-text -->
+      <span>Woodpecker</span>
+    </router-link>
+
     <div class="ml-auto flex shrink-0 items-center gap-1">
+      <span
+        v-if="version?.currentShort"
+        class="text-wp-text-alt-100 hidden px-2 font-mono text-xs sm:inline"
+        :title="version.current"
+      >
+        {{ version.currentShort }}
+      </span>
+      <ActivePipelines v-if="user" class="size-8" />
       <IconButton
         v-if="user?.admin"
-        class="navbar-icon relative"
-        :title="$t('settings')"
+        class="md:hidden!"
+        icon="settings-outline"
+        :title="$t('admin.settings.settings')"
         :to="{ name: 'admin-settings' }"
-      >
-        <Icon name="settings" />
-        <div v-if="version?.needsUpdate" class="bg-wp-error-100 absolute top-2 right-2 h-3 w-3 rounded-full" />
-      </IconButton>
-
-      <ActivePipelines v-if="user" class="navbar-icon p-1.5!" />
-      <IconButton v-if="user" :to="{ name: 'user' }" :title="$t('user.settings.settings')" class="navbar-icon p-1.5!">
-        <img v-if="user && user.avatar_url" class="size-full rounded-full object-cover" :src="user.avatar_url" alt="" />
-        <span v-else class="bg-wp-background-200 grid size-full place-items-center rounded-full text-xs">
-          {{ user.login.slice(0, 1).toUpperCase() }}
-        </span>
-      </IconButton>
-      <Button v-else :text="$t('login')" :to="{ name: 'login' }" class="h-8" @click="saveRedirect" />
+      />
+      <IconButton
+        v-if="user"
+        class="md:hidden!"
+        icon="user"
+        :title="$t('user.settings.settings')"
+        :to="{ name: 'user' }"
+      />
+      <Button v-else :text="$t('login')" :to="{ name: 'login' }" @click="saveRedirect" />
     </div>
-  </nav>
+  </header>
 </template>
 
 <script lang="ts" setup>
+import { mdiDockLeft } from '@mdi/js';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
 import WoodpeckerLogo from '~/assets/logo.svg?component';
 import Button from '~/components/atomic/Button.vue';
-import Icon from '~/components/atomic/Icon.vue';
 import IconButton from '~/components/atomic/IconButton.vue';
-import useAuthentication from '~/compositions/useAuthentication';
-import useConfig from '~/compositions/useConfig';
+import SvgIcon from '~/components/atomic/SvgIcon.vue';
 import useUserConfig from '~/compositions/useUserConfig';
 import { useVersion } from '~/compositions/useVersion';
+import type { User } from '~/lib/api/types';
 
 import ActivePipelines from './ActivePipelines.vue';
 
-const version = useVersion();
-const config = useConfig();
-const userConfig = useUserConfig();
-const route = useRoute();
-const authentication = useAuthentication();
-const { user } = authentication;
-const inRepositories = computed(() => /^\/repos(?:\/|$)/.test(route.path.slice(config.rootPath?.length ?? 0)));
-const apiUrl = `${config.rootPath ?? ''}/swagger/index.html`;
+const props = defineProps<{
+  user: User | null;
+  compact: boolean;
+  section: string;
+}>();
 
-const { enableSwagger } = config;
+defineEmits<{ toggleSidebar: [] }>();
+
+const { t } = useI18n();
+const route = useRoute();
+const userConfig = useUserConfig();
+const version = useVersion();
+const sectionTitle = computed(() => {
+  if (props.section === 'admin') return t('admin.settings.settings');
+  if (props.section === 'user') return t('user.settings.settings');
+  if (props.section === 'org' || props.section === 'orgs') return t('admin.settings.orgs.orgs');
+  return t('repositories.title');
+});
 
 function saveRedirect() {
   userConfig.setUserConfig('redirectUrl', route.fullPath);
 }
 </script>
-
-<style scoped>
-@reference '~/tailwind.css';
-
-.navbar-icon {
-  @apply size-8 p-1.5;
-}
-
-.navbar-icon :deep(svg) {
-  @apply size-full;
-}
-
-.navbar-link {
-  @apply text-wp-text-alt-100 hover:bg-wp-background-200 hover:text-card-foreground flex h-8 items-center rounded-md px-2 text-sm font-medium whitespace-nowrap sm:px-3;
-}
-
-.navbar-selected {
-  @apply bg-wp-background-200 text-card-foreground;
-}
-
-.navbar-link:focus-visible,
-.navbar-brand:focus-visible {
-  @apply outline-wp-link-100 outline-2 outline-offset-2;
-}
-</style>

@@ -14,6 +14,8 @@
       "desc": "Most recently visited repositories sorted by access time"
     }
   },
+  "navigation": "Navigation",
+  "toggle_sidebar": "Toggle sidebar",
   "docs": "Docs",
   "api": "API",
   "logout": "Sign out",
