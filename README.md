@@ -6,12 +6,12 @@ A community fork of [Woodpecker CI](https://github.com/woodpecker-ci/woodpecker)
   <img src=".github/images/shadcn-preview.svg" alt="Illustrated preview of the Woodpecker CI dashboard with a sidebar, repository cards, and pipeline statuses" width="100%" />
 </p>
 
-[Browse the dashboard source](https://github.com/shawniwe/woodpecker/tree/experiment/shadcn-self-deploy/web) · [View the self-deploy workflow](https://github.com/shawniwe/woodpecker/blob/experiment/shadcn-self-deploy/.woodpecker/self-deploy-ui.yaml) · [Report an issue](https://github.com/shawniwe/woodpecker/issues)
+[Browse the dashboard source](https://github.com/shawniwe/woodpecker/tree/experiment/shadcn-self-deploy/web) · [View the self-deploy workflow](https://github.com/shawniwe/woodpecker/blob/experiment/shadcn-self-deploy/.woodpecker/self-deploy-ui.yaml) · [Woodpecker documentation](https://woodpecker-ci.org/docs/intro)
 
 ## The dashboard
 
 - **Collapsible navigation** for repositories, administration, documentation, and account settings.
-- **Repository cards** with the latest pipeline status, run time, and commit message.
+- **Repository cards** with the latest pipeline status, relative time, and commit message.
 - **Pipeline details** with individual job states, durations, and a log panel that names the selected job.
 - **Light and dark themes** shared across navigation, forms, and settings.
 
